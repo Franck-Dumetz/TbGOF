@@ -27,6 +27,28 @@ This pipeline was initially developed for analyzing screens in kinetoplastid par
 
 ---
 
+## Dependencies
+The pipeline requires the following software and R packages. All are installed automatically when using the provided conda lock files, but the list is provided here for users installing manually.
+
+### Core Software:
+bash (≥4.0) – Required to run the ORF-enrich.sh shell pipeline.
+R (≥4.0.0) – Required for statistical analysis with DESeq2.
+
+### Bioinformatics Tools:
+Bowtie (1.3.1) – Aligns reads to the reference genome/ORFeome.
+samtools (≥1.10) – Converts, sorts, and indexes alignment files.
+SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
+Trimmomatic (≥0.39) – Optional, used for read trimming/quality filtering if included in your workflow.
+
+### R Packages:
+DESeq2 (≥1.30.0) – Performs differential representation analysis.
+tidyverse (≥1.3.0) – Data wrangling and plotting.
+optparse – Command-line argument parsing in R scripts.
+
+### System Libraries:
+libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldlib-links.sh).
+
+---
 
 ## Conda Environment Setup
 # Clone the git repository and enter the the ORFeome directory
@@ -65,7 +87,7 @@ conda activate TbGOF
 |------|-----------|-------------|
 | `-A` | ✅ | **Genome annotation file** in GFF format. |
 | `-G` | ✅ | **Genome file** in FASTA format. |
-| `-T` | ✅ | **Treatments CSV file** for grouping samples. <br><br>Must be a **two-column, headerless CSV** with:<br>• Sample names in column 1 (matching SRA IDs or FASTQ names)<br>• Condition/library names in column 2, starting with `treated_` or `untreated_` (e.g., `untreated_NewMP`)<br><br>An example is provided in the `test-data/` folder. |
+| `-T` | ✅ | **Treatments CSV file** for grouping samples.<br><br>Must be a **two-column, headerless CSV** with:<br>• **Column 1 – Sample names**<br>&nbsp;&nbsp;• If using **SRA IDs** (`-R`): names must exactly match the SRA accession IDs.<br>&nbsp;&nbsp;• If using **local FASTQ files** (`-F`): names must exactly match the FASTQ filenames, without the `.fastq` extension (e.g., `sample1.fastq` → `sample1`).<br>• **Column 2 – Condition/library names**, starting with `treated_` or `untreated_` (e.g., `untreated_NewMP`).<br><br>An example is provided in the `test-data/` folder. |
 | `-C` | ✅ | **Fold change** as an integer. |
 | `-R` | One of `-R` or `-F` is required | Path to a text file containing SRA accession numbers, one per line:<br>```SRR10846669\nSRR10846670\n...``` |
 | `-F` | One of `-R` or `-F` is required | Path to a directory containing `.fastq` files. |
