@@ -96,10 +96,6 @@ conda activate TbGOF
 | `-m` | Optional | Process **multi-mapped** reads only.<br>If neither `-u` nor `-m` is used, both types will be processed. |
 
 > **Note:** The order of arguments does not matter, but each flag must come before its corresponding input.
----
-
-## Output
-
 
 ### Running with Test Data
 Use the following command to run with the provided test data set:
@@ -111,3 +107,34 @@ Once you have successfully run the full pipeline once, you can rerun the differe
 ```
 Rscript Deseq2.R <fold-change>
 ```
+---
+
+## Output
+
+The pipeline generates several CSV files, all stored in a folder called `results` that is created automatically. The outputs include:
+
+- **CSV files for each comparison:**  
+  Each file contains:
+  - Normalized counts for each replicate in the comparison  
+  - Average normalized count for each library  
+  - Fold change  
+  - P-adjusted value  
+
+  **Note:** A gene will appear in these files only if its p-adjusted value is less than 0.05. Each CSV file is named according to the fold change specified by the user.
+
+- **CSV file with common genes:**  
+  Contains all genes that are shared across all comparisons’ fold change analyses.
+
+- **CSV file with low-count genes:**  
+  Contains genes with very low counts (normalized count < 5) in the untreated samples.
+
+### Intermediate Files
+
+The pipeline also saves files generated during intermediate steps:
+
+- **FASTQ files from SRA** (if `-R` is used)  
+- **Trimmed FASTQ files**  
+- **BAM files**  
+- **Raw read counts** in `counts.csv`  
+
+To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
