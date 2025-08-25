@@ -51,20 +51,20 @@ libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldli
 ---
 
 ## Conda Environment Setup
-# Clone the git repository and enter the the ORFeome directory
+### Clone the git repository and enter the the ORFeome directory
 ```
 git clone https://github.com/Franck-Dumetz/TbGOF.git
 cd TbGOF
 ```
-# Linux 
+### Linux 
 ```
 conda create -n TbGOF --file conda-linux-64.lock
 ```
-# MacOS
+### MacOS
 ```
 conda create -n TbGOF --file conda-osx-64.lock
 ```
-# Activate the conda environment
+### Activate the conda environment
 ```
 conda activate TbGOF
 ```
@@ -72,6 +72,7 @@ conda activate TbGOF
 # [Linux only] Fix potential C++ library compatibility issues (required by bowtie)
 ./ldlib-links.sh
 ```
+---
 
 ## Running the Pipeline
 
@@ -95,6 +96,10 @@ conda activate TbGOF
 | `-m` | Optional | Process **multi-mapped** reads only.<br>If neither `-u` nor `-m` is used, both types will be processed. |
 
 > **Note:** The order of arguments does not matter, but each flag must come before its corresponding input.
+---
+
+## Output
+
 
 ### Running with Test Data
 Use the following command to run with the provided test data set:
