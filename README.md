@@ -31,22 +31,22 @@ This pipeline was initially developed for analyzing screens in kinetoplastid par
 The pipeline requires the following software and R packages. All are installed automatically when using the provided conda lock files, but the list is provided here for users installing manually.
 
 **Core Software**:
-bash (≥4.0) – Required to run the ORF-enrich.sh shell pipeline.
-R (≥4.0.0) – Required for statistical analysis with DESeq2.
+- bash (≥4.0) – Required to run the ORF-enrich.sh shell pipeline.
+- R (≥4.0.0) – Required for statistical analysis with DESeq2.
 
 **Bioinformatics Tools**:
-Bowtie (1.3.1) – Aligns reads to the reference genome/ORFeome.
-samtools (≥1.10) – Converts, sorts, and indexes alignment files.
-SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
-Trimmomatic (≥0.39) – Optional, used for read trimming/quality filtering if included in your workflow.
+- Bowtie (1.3.1) – Aligns reads to the reference genome/ORFeome.
+- samtools (≥1.10) – Converts, sorts, and indexes alignment files.
+- SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
+- Trimmomatic (≥0.39) – Optional, used for read trimming/quality filtering if included in your workflow.
 
 **R Packages**:
-DESeq2 (≥1.30.0) – Performs differential representation analysis.
-tidyverse (≥1.3.0) – Data wrangling and plotting.
-optparse – Command-line argument parsing in R scripts.
+- DESeq2 (≥1.30.0) – Performs differential representation analysis.
+- tidyverse (≥1.3.0) – Data wrangling and plotting.
+- optparse – Command-line argument parsing in R scripts.
 
 **System Libraries**:
-libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldlib-links.sh).
+- libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldlib-links.sh).
 
 ---
 
