@@ -138,3 +138,21 @@ The pipeline also saves files generated during intermediate steps:
 - **Raw read counts** in `counts.csv`  
 
 To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
+---
+## Terminal Output
+
+When you run the pipeline, progress messages will be printed to the terminal. These indicate each major stage of the workflow.  
+
+Example run with the test dataset:  
+
+```bash
+(TbGOF) anushkashome@Anushkas-MacBook-Air-4 TbGOF % ./ORF-enrich.sh -A test-data/test-annot.gff -R test-data/test-sra.txt -G test-data/test-genome.fasta -u -T test-data/test-treatments.csv -C 4
+<<SRAs converted to FASTQs>>
+<<FASTQs trimmed>>
+<<Bowtie complete>>
+<<BAM files made>>
+<<GFF trimmed>>
+<<Read count complete>>
+<<DESeq2 analysis complete.>>
+<<Results saved in: results/foldchange_4_<comparison_name>.csv>>
+<<Genes with no counts are listed in: results/no-counts.csv>>
