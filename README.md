@@ -30,45 +30,45 @@ This pipeline was initially developed for analyzing screens in kinetoplastid par
 ## Dependencies
 The pipeline requires the following software and R packages. All are installed automatically when using the provided conda lock files, but the list is provided here for users installing manually.
 
-### Core Software:
+**Core Software**:
 bash (≥4.0) – Required to run the ORF-enrich.sh shell pipeline.
 R (≥4.0.0) – Required for statistical analysis with DESeq2.
 
-### Bioinformatics Tools:
+**Bioinformatics Tools**:
 Bowtie (1.3.1) – Aligns reads to the reference genome/ORFeome.
 samtools (≥1.10) – Converts, sorts, and indexes alignment files.
 SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
 Trimmomatic (≥0.39) – Optional, used for read trimming/quality filtering if included in your workflow.
 
-### R Packages:
+**R Packages**:
 DESeq2 (≥1.30.0) – Performs differential representation analysis.
 tidyverse (≥1.3.0) – Data wrangling and plotting.
 optparse – Command-line argument parsing in R scripts.
 
-### System Libraries:
+**System Libraries**:
 libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldlib-links.sh).
 
 ---
 
 ## Conda Environment Setup
 ### Clone the git repository and enter the the ORFeome directory
-```
+```bash
 git clone https://github.com/Franck-Dumetz/TbGOF.git
 cd TbGOF
 ```
 ### Linux 
-```
+```bash
 conda create -n TbGOF --file conda-linux-64.lock
 ```
 ### MacOS
-```
+```bash
 conda create -n TbGOF --file conda-osx-64.lock
 ```
 ### Activate the conda environment
-```
+```bash
 conda activate TbGOF
 ```
-```
+```bash
 # [Linux only] Fix potential C++ library compatibility issues (required by bowtie)
 ./ldlib-links.sh
 ```
@@ -78,7 +78,7 @@ conda activate TbGOF
 
 ### Usage
 
-```
+```bash
 ./ORF-enrich.sh -A <annotation.gff> -G <genome.fasta> -T <treatments.csv> -C <fold_change> [-R <sra_list.txt> | -F <fastq_directory>] [-u] [-m]
 ```
 
@@ -99,12 +99,12 @@ conda activate TbGOF
 
 ### Running with Test Data
 Use the following command to run with the provided test data set:
-```
+```bash
 ./ORF-enrich.sh -A test-data/test-annot.gff -R test-data/test-sra.txt -G test-data/test-genome.fasta -u -T test-data/test-treatments.csv -C 4
 ```
 ### Rerunning with Different Fold Changes
 Once you have successfully run the full pipeline once, you can rerun the differential expression step only using different fold-change thresholds without reprocessing all the data:
-```
+```bash
 Rscript Deseq2.R <fold-change>
 ```
 ---
@@ -128,18 +128,8 @@ The pipeline generates several CSV files, all stored in a folder called `results
 - **CSV file with low-count genes:**  
   Contains genes with very low counts (normalized count < 5) in the untreated samples.
 
-### Intermediate Files
-
-The pipeline also saves files generated during intermediate steps:
-
-- **FASTQ files from SRA** (if `-R` is used)  
-- **Trimmed FASTQ files**  
-- **BAM files**  
-- **Raw read counts** in `counts.csv`  
-
-To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
-
 ---
+
 ## Terminal Output
 
 When you run the pipeline, progress messages will be printed to the terminal. These indicate each major stage of the workflow.  
@@ -157,3 +147,17 @@ Example run with the test dataset:
 <<DESeq2 analysis complete.>>
 <<Results saved in: results/foldchange_4_<comparison_name>.csv>>
 <<Genes with no counts are listed in: results/no-counts.csv>>
+```
+
+---
+
+### Intermediate Files
+
+The pipeline also saves files generated during intermediate steps:
+
+- **FASTQ files from SRA** (if `-R` is used)  
+- **Trimmed FASTQ files**  
+- **BAM files**  
+- **Raw read counts** in `counts.csv`  
+
+To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
