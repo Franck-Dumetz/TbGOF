@@ -138,6 +138,7 @@ The pipeline also saves files generated during intermediate steps:
 - **Raw read counts** in `counts.csv`  
 
 To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
+
 ---
 ## Terminal Output
 
