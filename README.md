@@ -12,7 +12,7 @@ Publication:
 
 **TbGOF** is a set of scripts and tools designed to analyze gain-of-function (GoF) screens in _T. brucei_. It identifies open reading frames (ORFs) that are significantly overrepresented in treated samples compared to untreated controls, helping to discover genes associated different stresses like exposure to drug.
 
-This pipeline was initially developed for analyzing screens in kinetoplastid parasites but can be adapted to other organisms. This pipeline revamps, add options, and automatises the data analysis from Carter M, et al. [A Trypanosoma brucei ORFeome-Based Gain-of-Function Library Identifies Genes That Promote Survival during Melarsoprol Treatment](https://journals.asm.org/doi/full/10.1128/msphere.00769-20?rfr_dat=cr_pub++0pubmed&url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org). mSphere. 2020 Oct 7;5(5):e00769-20. doi: 10.1128/mSphere.00769-20. PMID: 33028684; PMCID: PMC7568655.
+The pipeline was validated using sequencing data from Carter et al. (2020) [A Trypanosoma brucei ORFeome-Based Gain-of-Function Library Identifies Genes That Promote Survival during Melarsoprol Treatment](https://journals.asm.org/doi/full/10.1128/msphere.00769-20?rfr_dat=cr_pub++0pubmed&url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org) (mSphere. 2020 Oct 7;5(5):e00769-20. doi: 10.1128/mSphere.00769-20. PMID: 33028684; PMCID: PMC7568655), with both unique and multiple alignments assessed. Using the TriTrypDB _T. brucei_ reference genome (v52, approximate) and a fold change threshold of 4, the pipeline reproduced the original analysis, identifying 56 overrepresented genes, of which 54 overlapped with the 57 reported in the original study.
 
 ---
 
