@@ -21,7 +21,7 @@ library(DESeq2)
 args <- commandArgs(trailingOnly = TRUE)
 fc_input <- as.integer(args[1])
 
-counts <- read.csv("counts.csv", header = TRUE, row.names = 1)
+counts <- read.csv("counts.csv", header = TRUE, row.names = 1, check.names = FALSE)
 counts <- as.matrix(counts)
 
 coldata <- read.csv("treatments.csv", row.names = 1, stringsAsFactors = FALSE)
