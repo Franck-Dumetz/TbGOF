@@ -106,7 +106,7 @@ if [[ -z "$sras" && -z "$fastqs" ]]; then
 fi
 
 if [[ ! -z "$fastqs" ]]; then
-  fastqs="{fastqs%/}"
+  fastqs="${fastqs%/}"
   mkdir fastqs
   cp "${fastqs}"/* fastqs/
 fi
