@@ -35,7 +35,7 @@ The pipeline requires the following software and R packages. All are installed a
 - R (≥4.0.0) – Required for statistical analysis with DESeq2.
 
 **Bioinformatics Tools**:
-- Bowtie (1.3.1) – Aligns reads to the reference genome/ORFeome.
+- Bowtie (≥2.5.5) – Aligns reads to the reference genome/ORFeome.
 - samtools (≥1.10) – Converts, sorts, and indexes alignment files.
 - SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
 - Trimmomatic (≥0.39) – Optional, used for read trimming/quality filtering if included in your workflow.
@@ -56,13 +56,9 @@ The pipeline requires the following software and R packages. All are installed a
 git clone https://github.com/Franck-Dumetz/TbGOF.git
 cd TbGOF
 ```
-### Linux 
-```bash
-conda create -n TbGOF --file conda-linux-64.lock
+### Set up the conda environment
 ```
-### MacOS
-```bash
-conda create -n TbGOF --file conda-osx-64.lock
+conda create --file environment.yml
 ```
 ### Activate the conda environment
 ```bash
