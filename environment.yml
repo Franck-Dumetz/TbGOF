@@ -1,4 +1,4 @@
-name: ORFeome
+name: TbGOF
 channels:
   - bioconda
   - conda-forge
@@ -12,6 +12,7 @@ dependencies:
   - fastqc
   - sra-tools
   - pip
-  - r-base=4.2
+  - r-base=4.4
   - bioconductor-deseq2
   - r-openxlsx
+  - bowtie2
