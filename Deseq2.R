@@ -22,7 +22,9 @@ args <- commandArgs(trailingOnly = TRUE)
 fc_input <- as.integer(args[1])
 
 counts <- read.csv("counts.csv", header = TRUE, row.names = 1, check.names = FALSE)
-counts <- as.matrix(counts)
+gene_desc <- counts$Description
+names(gene_desc) <- rownames(counts)
+counts <- as.matrix(counts[, !(colnames(counts) %in% c("Description"))])
 
 coldata <- read.csv("treatments.csv", row.names = 1, stringsAsFactors = FALSE)
 coldata$Condition <- factor(coldata$Condition)
@@ -49,15 +51,19 @@ get_fc_tables <- function(treated, untreated, norm_counts, dds, replicates) {
     untreated_vals <- norm_counts[gene, replicates[[untreated]]]
     treated_vals   <- norm_counts[gene, replicates[[treated]]]
     
-    fold_changes <- treated_vals / untreated_vals
+    valid <- untreated_vals != 0
+    
+    fold_changes <- treated_vals[valid] / untreated_vals[valid]
+    
+    #fold_changes <- treated_vals / untreated_vals
     
     name_and_func <- strsplit(gene, ";")[[1]]
     nf <- strsplit(name_and_func, "=")
     named <- setNames(sapply(nf, `[`, 2), sapply(nf, `[`, 1))
-    
+    desc <- gene_desc[gene]
     gene_info <- data.frame(
-      Gene = as.character(named["ID"]),
-      Description = as.character(named["Name"]),
+      Gene = gene,
+      Description = desc,
       Phenotype = "overrepresented",
       stringsAsFactors = FALSE
     )
@@ -83,19 +89,29 @@ get_fc_tables <- function(treated, untreated, norm_counts, dds, replicates) {
     rep_df <- as.data.frame(as.list(rep_values))
     names(rep_df) <- rep_names
     
-    stats <- data.frame(
-      TreatedAvg = mean(treated_vals),
-      UntreatedAvg = mean(untreated_vals),
-      FoldChange = mean(fold_changes),
-      padj = res[gene, "padj"],
-      stringsAsFactors = FALSE
-    )
-    
+    if(all(valid)) {
+      stats <- data.frame(
+        TreatedAvg = mean(treated_vals[valid]),
+        UntreatedAvg = mean(untreated_vals[valid]),
+        FoldChange = mean(fold_changes),
+        padj = res[gene, "padj"],
+        stringsAsFactors = FALSE
+      )
+    } else {
+      stats <- data.frame(
+        TreatedAvg = mean(treated_vals[valid]),
+        UntreatedAvg = mean(untreated_vals[valid]),
+        FoldChange = mean(fold_changes),
+        padj = res[gene, "padj"],
+        stringsAsFactors = FALSE
+      )
+    }
     gene_info <- cbind(gene_info, rep_df, stats)
     
     if (max(untreated_vals) < 5) next
+    if (min(untreated_vals) == 0) next
     
-    if (all(fold_changes > fc_input)) fc <- rbind(fc, gene_info)
+    if (all(fold_changes > fc_input, na.rm = TRUE)) fc <- rbind(fc, gene_info)
   }
   
   return(list(fc=fc))
@@ -111,8 +127,8 @@ no_counts <- function(untreated, replicates){
     nf <- strsplit(name_and_func, "=")
     named <- setNames(sapply(nf, `[`, 2), sapply(nf, `[`, 1))
     gene_info <- data.frame(
-      Gene = as.character(named["ID"]),
-      Description = as.character(named["Name"]),
+      Gene = gene,
+      Description = gene_desc[gene],
       stringsAsFactors = FALSE
     )
     
@@ -126,9 +142,18 @@ untreated_m1  <- grep("^untreated.*_m1$", names(replicate_groups), value = TRUE)
 treated_m10   <- grep("^treated.*_m10$", names(replicate_groups), value = TRUE)
 untreated_m10 <- grep("^untreated.*_m10$", names(replicate_groups), value = TRUE)
 untreated_both <- grep("^untreated", names(replicate_groups), value = TRUE)
+treated_both <- grep("^treated", names(replicate_groups), value = TRUE )
 
 zero <- no_counts(untreated_both, replicate_groups)
-write.csv(zero, "results/no-counts.csv", row.names = FALSE)
+write.csv(zero, "results/no-counts-untreated.csv", row.names = FALSE)
+zero_t <- no_counts(treated_both, replicate_groups)
+write.csv(zero_t, "results/no-counts-treated.csv", row.names = FALSE)
+common <- merge(zero, zero_t, by = "Gene")
+common$Description.y <- NULL
+names(common)[names(common) == "Description.x"] <- "Description"
+
+write.csv(common, "results/no-counts-both.csv", row.names = FALSE)
+
 
 fc_list <- list()
 
@@ -156,7 +181,7 @@ if (length(fc_list) > 0) {
   if (length(common_genes) > 0) {
     fc_all <- do.call(rbind, lapply(fc_list, as.data.frame))
     common_df <- fc_all[fc_all$Gene %in% common_genes, ]
-    common_df <- unique(common_df[, c("Gene", "Description", "Phenotype")])
+    common_df <- unique(common_df[, c("Gene", "Phenotype")])
     write.csv(common_df, paste0("results/foldchange_", fc_input, "_CommonHits.csv"), row.names = FALSE)
   }
 }
