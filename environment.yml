@@ -1,4 +1,4 @@
-name: TbGOF-test
+name: TbGOF
 channels:
   - conda-forge
   - bioconda
