@@ -149,17 +149,19 @@ echo "<<FASTQs trimmed>>"
 #Trimmed FASTQ -> SAM (populates & creates the sam directory)
 mkdir sam
 
-bowtie-build $fasta index >> output.log
+#bowtie-build $fasta index >> output.log
+bowtie2-build $fasta index >> output.log 2>&1
 
 for file in trimmed/*.fq; do
   basename="${file##*/}"
   basename="${basename%_*}"
   if [ "$unique" -eq 1 ]; then
-    bowtie --best --strata -t -v 2 -a -m 1 -S index $file > sam/"${basename}_m1.sam" 2>> output.log
+    bowtie2 --local -x index -U $file -S sam/"${basename}_m1.sam" 2>> output.log
   fi
   if [ "$multiple" -eq 1 ]; then
-    bowtie --best --strata -t -v 2 -a -m 10 -S index $file > sam/"${basename}_m10.sam" 2>> output.log
+    bowtie2 --local -k 10 -x index -U $file -S sam/"${basename}_m10.sam" 2>> output.log
   fi
+  #bowtie2 --local -x index -U $file -S sam/"${basename}_m10.sam" 2>> output.log
 done
 #bowtie --best --strata -t -v 2 -a -m 10 -S index trimmed/
 echo "<<Bowtie complete>>"
@@ -209,4 +211,3 @@ echo "<<Genes with no counts are listed in: results/no-counts.csv>>"
 #rm -r trimmed
 rm -r sam
 #rm -r bam
-
