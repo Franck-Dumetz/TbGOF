@@ -21,10 +21,12 @@
 # The resulting trimmed GFF is written to a new file.
 
 import sys
+from collections import defaultdict
 
 # Change these file names
 inp = sys.argv[1]
 out = "trimmed_genome.gff"
+des = defaultdict(dict)
 
 with open(inp, 'r') as infile, open(out, 'w') as outfile:
     for line in infile:
@@ -36,7 +38,11 @@ with open(inp, 'r') as infile, open(out, 'w') as outfile:
             continue
 
         # GFF files have 9 fields: chromosome, source, type, start amino acid, end amino acid, alignment score, strand, phase, attributes
-
+        if fields[2] == "mRNA":
+            gene_id = fields[8].split("ID=")[1].split(";")[0]
+            description = fields[8].split("description=")[1].split(";")[0]
+            des[gene_id] = description
+            
         if fields[2] != "CDS":
             continue
 
@@ -56,5 +62,8 @@ with open(inp, 'r') as infile, open(out, 'w') as outfile:
             e = end
         fields[3] = str(s)
         fields[4] = str(e)
+
+        parent = fields[8].split("Parent=")[1].split(";")[0]
+        fields[8] = f"{fields[8]};Description={des[parent]}" 
 
         outfile.write("\t".join(fields) + "\n")
