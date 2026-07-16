@@ -38,7 +38,7 @@ The pipeline requires the following software and R packages. All are installed a
 - Bowtie (≥2.5.5) – Aligns reads to the reference genome/ORFeome.
 - samtools (≥1.10) – Converts, sorts, and indexes alignment files.
 - SRA Toolkit (≥2.11.0) – Downloads sequencing data from NCBI when using -R.
-- trim_galore (≥2.3.0) – Optional, used for read trimming/quality filtering if included in your workflow.
+- trim_galore (≥2.3.0) – Used for read trimming/quality filtering.
 
 **R Packages**:
 - DESeq2 (≥1.30.0) – Performs differential representation analysis.
