@@ -45,9 +45,6 @@ The pipeline requires the following software and R packages. All are installed a
 - tidyverse (≥1.3.0) – Data wrangling and plotting.
 - optparse – Command-line argument parsing in R scripts.
 
-**System Libraries**:
-- libstdc++ – C++ standard library (required for Bowtie on Linux; fixed via ldlib-links.sh).
-
 ---
 
 ## Conda Environment Setup
@@ -64,10 +61,7 @@ conda create --file environment.yml
 ```bash
 conda activate TbGOF
 ```
-```bash
-# [Linux only] Fix potential C++ library compatibility issues (required by bowtie)
-./ldlib-links.sh
-```
+
 ---
 
 ## Running the Pipeline
