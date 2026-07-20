@@ -113,7 +113,7 @@ The pipeline generates several CSV files, all stored in a folder called `results
   **Note:** A gene will appear in these files only if its p-adjusted value is less than 0.05. Each CSV file is named according to the fold change specified by the user.
 
 - **CSV file with common genes:**  
-  Contains all genes that are shared across all comparisons’ fold change analyses.
+  Contains all genes that are shared across all comparisons’ fold-change analyses.
 
 - **CSV file with low-count genes:**  
   Contains genes with very low counts (normalized count < 5) in the untreated samples.
@@ -132,7 +132,7 @@ When you run the pipeline, progress messages will be printed to the terminal. Th
 Example run with the test dataset:  
 
 ```bash
-(TbGOF) anushkashome@Anushkas-MacBook-Air-4 TbGOF % ./ORF-enrich.sh -A test-data/test-annot.gff -R test-data/test-sra.txt -G test-data/test-genome.fasta -u -T test-data/test-treatments.csv -C 4
+(TbGOF) computer1 TbGOF % ./ORF-enrich.sh -A test-data/test-annot.gff -R test-data/test-sra.txt -G test-data/test-genome.fasta -u -T test-data/test-treatments.csv -C 4
 <<SRAs converted to FASTQs>>
 <<FASTQs trimmed>>
 <<Bowtie complete>>
