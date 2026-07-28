@@ -30,7 +30,9 @@ coldata <- read.csv("treatments.csv", row.names = 1, stringsAsFactors = FALSE)
 coldata$Condition <- factor(coldata$Condition)
 
 dir.create("results", showWarnings = FALSE, recursive = TRUE)
-stopifnot(all(rownames(coldata) == colnames(counts)))
+#stopifnot(all(rownames(coldata) == colnames(counts)))
+stopifnot(setequal(rownames(coldata), colnames(counts)))
+coldata <- coldata[colnames(counts), , drop = FALSE]
 
 dds <- DESeqDataSetFromMatrix(countData = counts, colData = coldata, design = ~Condition)
 dds <- DESeq(dds)
