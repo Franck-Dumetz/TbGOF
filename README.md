@@ -100,6 +100,7 @@ Rscript Deseq2.R <fold-change>
 ---
 
 ## Output
+The pipeline creates a `results` directory containing the following files:
 
 ### Low-count gene reports
 Three CSV files listing genes with zero counts:
