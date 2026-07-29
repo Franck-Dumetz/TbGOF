@@ -98,10 +98,6 @@ Once you have successfully run the full pipeline once, you can rerun the differe
 Rscript Deseq2.R <fold-change>
 ```
 ---
-> **Note:** The pipeline runs differential expression analysis in two directions, initially running it according to the treatments file given by the user, and then flipping the untreated and treated labels and running it again. So, after running the pipeline for the first time, you might need to flip the treated and untreated labels back to the correct samples. To flip the treatments, run the following command:
-```bash
-python switch-treatments.py
-```
 
 ## Output
 
