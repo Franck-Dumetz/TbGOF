@@ -204,6 +204,7 @@ mkdir results
 Rscript Deseq2.R $fold 1 >> output.log 2>&1
 python switch-treatments.py
 Rscript Deseq2.R $fold >> output.log 2>&1
+python switch-treatments.py
 echo "<<DESeq2 analysis complete.>>"
 echo "<<Results saved in: results/foldchange_${fold}_<comparison_name>.csv>>"
 echo "<<Genes with no counts are listed in: results/no-counts.csv>>"
