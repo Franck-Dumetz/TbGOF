@@ -38,16 +38,22 @@ def read_gff(fn, bam):
             fields = line.strip().split("\t")
             if len(fields) < 9:
                 continue
-            gene = fields[8].split("gene_id=")[1].split(";")[0]
-            count_reads(bam, fields)
-            des[fields[8].split("gene_id=")[1].split(";")[0]] = fields[8].split("Description=")[1].split(";")[0]
+            if "gene_id" in fields[8]:
+                gene = fields[8].split("gene_id=")[1].split(";")[0]
+                count_reads(bam, fields, gene)
+                des[fields[8].split("gene_id=")[1].split(";")[0]] = fields[8].split("Description=")[1].split(";")[0]
+            else:
+                gene = fields[8].split("ID=")[1].split(";")[0]
+                count_reads(bam, fields, gene)
+                des[fields[8].split("ID=")[1].split(";")[0]] = fields[8].split("Description=")[1].split(";")[0]
 
-def count_reads(bam, fields):
+
+def count_reads(bam, fields, name):
     chrom = fields[0]
     start = int(fields[3])
     end = int(fields[4])
     #name = fields[8].split(":")[0]
-    name = fields[8].split("gene_id=")[1].split(";")[0]
+    #name = fields[8].split("gene_id=")[1].split(";")[0]
     cmd = ["samtools", "view", f"bam/{bam}", f"{chrom}:{start}-{end}"]
     result = subprocess.run(cmd, stdout=subprocess.PIPE, universal_newlines=True, check=True)
     output = result.stdout.strip()
