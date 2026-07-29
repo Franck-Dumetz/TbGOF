@@ -159,5 +159,20 @@ To save space, **SAM files are removed** after conversion, but all their informa
 
 ---
 
+## Supported GFF3 annotation formats
+
+This pipeline currently supports two GFF3 annotation formats:
+
+- Ribosomal profiling annotation
+-   Gene identifier is taken from the ID attribute.
+-   Gene description is taken from the Name attribute.
+- TriTrypDB annotation
+-   Gene identifier is taken from the gene_id attribute (or Parent when gene_id is unavailable).
+-   Gene description is taken from the description attribute of the corresponding mRNA feature.
+
+Other GFF3 formats may require modifications to the attribute-parsing step.
+
+---
+
 ## Contact & Support
 For any issues or questions, please open an issue in this repository or contact us at fdumetz@som.umaryland.edu.
