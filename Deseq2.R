@@ -200,7 +200,8 @@ for (treated in c(treated_m1, treated_m10)) {
 if (length(fc_list) > 0) {
   common_genes <- Reduce(intersect, lapply(fc_list, function(x) x$Gene))
   if (length(common_genes) > 0) {
-    fc_all <- do.call(rbind, lapply(fc_list, as.data.frame))
+    fc_all <- do.call(rbind, lapply(fc_list, function(x) x[, c("Gene", "Phenotype"), drop = FALSE]))
+    #fc_all <- do.call(rbind, lapply(fc_list, as.data.frame))
     common_df <- fc_all[fc_all$Gene %in% common_genes, ]
     common_df <- unique(common_df[, c("Gene", "Phenotype")])
     treated_name <- sub("^[^_]+_", "", treated_names_combined)
