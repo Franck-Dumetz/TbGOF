@@ -62,8 +62,13 @@ with open(inp, 'r') as infile, open(out, 'w') as outfile:
             e = end
         fields[3] = str(s)
         fields[4] = str(e)
-
-        parent = fields[8].split("Parent=")[1].split(";")[0]
-        fields[8] = f"{fields[8]};Description={des[parent]}" 
+        parent = fields[8].split("ID=")[1].split(";")[0]
+        if "Parent=" in fields[8]:
+            parent = fields[8].split("Parent=")[1].split(";")[0]
+        if parent in des:
+            fields[8] = f"{fields[8]};Description={des[parent]}"
+        else:
+            name = fields[8].split("Name=")[1].split(";")[0]
+            fields[8] = f"{fields[8]};Description={name}"
 
         outfile.write("\t".join(fields) + "\n")
