@@ -48,7 +48,7 @@ The pipeline requires the following software and R packages. All are installed a
 ---
 
 ## Conda Environment Setup
-### Clone the git repository and enter the the ORFeome directory
+### Clone the git repository and enter the ORFeome directory
 ```bash
 git clone https://github.com/Franck-Dumetz/TbGOF.git
 cd TbGOF
@@ -84,11 +84,12 @@ conda activate TbGOF
 | `-F` | One of `-R` or `-F` is required | Path to a directory containing `.fastq` files. |
 | `-u` | Optional | Process **uniquely aligned** reads only. |
 | `-m` | Optional | Process **multi-mapped** reads only.<br>If neither `-u` nor `-m` is used, both types will be processed. |
+| `-f` | Optional | Force re-trimming and re-alignment even if a complete set of BAM files already exists in bam/ (see Resuming After a Partial Run below). |
 
 > **Note:** The order of arguments does not matter, but each flag must come before its corresponding input.
 
 ### Running with Test Data
-Use the following command to run with the provided test data set:
+Use the following command to run with the provided test dataset:
 ```bash
 ./ORF-enrich.sh -A test-data/test-annot.gff -R test-data/test-sra.txt -G test-data/test-genome.fasta -u -T test-data/test-treatments.csv -C 4
 ```
@@ -131,6 +132,7 @@ Example output files are provided in the `example-results/` folder. These demons
 #### ⚠️ Troubleshooting
 If the `results/` folder is empty, missing, or only partially populated, the pipeline may have failed silently. Check `output.log` for details on any errors. Common causes include insufficient disk space, which can prevent intermediate files from being created and cause DESeq2 analysis to fail.
 
+If the failure happened after alignment finished (e.g., during gene counting or DESeq2), fix the underlying issue and re-run the same command—the pipeline will detect the existing BAM files and skip straight past trimming/alignment (see Resuming After a Partial Run).
 ---
 
 ## Terminal Output
@@ -160,11 +162,10 @@ The pipeline also saves files generated during intermediate steps:
 
 - **FASTQ files from SRA** (if `-R` is used)  
 - **Trimmed FASTQ files**  
-- **BAM files**  
+- **BAM files (sorted and indexed; used as the resume checkpoint described in Resuming After a Partial Run)**  
 - **Raw read counts** in `counts.csv`  
 
-To save space, **SAM files are removed** after conversion, but all their information is preserved in the corresponding BAM files.
-
+Alignment is piped directly from bowtie2 into samtools sort, so no intermediate SAM files are ever written to disk.
 ---
 
 ## Supported GFF3 annotation formats
