@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ORFeome – Analyzing ORFeome screening data
+# TbGOF – Analyzing T. brucei Gain-of-Function drug-screening data 
 # Copyright (C) 2025 Anushka Shome and Franck Dumetz
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,12 @@
 # along with this program.  If not, see https://www.gnu.org/licenses/.
 
 # This script automates the analysis of ORFeome screening data. It accepts
-# either SRA accession IDs or FASTQ files as input, performs quality trimming,
+# either SRA accession IDs or FASTQ files (gzipped or not) as input, performs quality trimming,
 # alignment to a reference genome using Bowtie, BAM file generation and sorting,
 # gene quantification via SeqMonk, and differential expression analysis with DESeq2.
 # Both uniquely and/or multi-mapped reads can be analyzed depending on user flags.
 # Differential expression results are output as Excel files with fold change filtering.
+
 
 set -euo pipefail
 
@@ -151,14 +152,13 @@ if [[ ! -d fastqs ]]; then
   echo "<<SRAs converted to FASTQs>>"
 fi
 
-# FASTQ -> Trimmed FASTQ -> sorted, indexed BAM. Skipped entirely if a
-# complete set of BAM files already exists in bam/ (one *_m1.bam per raw
-# sample if -u was requested, one *_m10.bam per raw sample if -m was
-# requested), unless -f forces a re-run. This lets you re-run after a
-# downstream failure (e.g. count-reads.py/DESeq2 erroring) without
-# repeating trimming+alignment.
-# NOTE: it does not detect changed input files — use -f if fastqs/ contents
-# changed since the BAM files were generated.
+# FASTQ -> Trimmed FASTQ -> sorted, indexed BAM. Trimming and alignment are
+# each skipped independently if their outputs already look complete, unless
+# -f forces a re-run. This lets you re-run after a downstream failure (e.g.
+# count-reads.py/DESeq2 erroring, or a crash mid-alignment) without
+# repeating whichever earlier step(s) already finished.
+# NOTE: neither check detects changed input files — use -f if fastqs/
+# contents changed since trimming/alignment were last run.
 shopt -s nullglob
 raw_fastqs=(fastqs/*.fastq fastqs/*.fq fastqs/*.fastq.gz fastqs/*.fq.gz)
 shopt -u nullglob
@@ -174,12 +174,12 @@ if [[ "$force" -eq 1 ]]; then
   align_complete=0
 else
   if [[ "$unique" -eq 1 ]]; then
-    n_have=$(compgen -G "bam/*_m1.bam" | wc -l)
-    [[ "$n_have" -eq "$n_expected" ]] || align_complete=0
+    shopt -s nullglob; have_m1=(bam/*_m1.bam); shopt -u nullglob
+    [[ ${#have_m1[@]} -eq "$n_expected" ]] || align_complete=0
   fi
   if [[ "$multiple" -eq 1 ]]; then
-    n_have=$(compgen -G "bam/*_m10.bam" | wc -l)
-    [[ "$n_have" -eq "$n_expected" ]] || align_complete=0
+    shopt -s nullglob; have_m10=(bam/*_m10.bam); shopt -u nullglob
+    [[ ${#have_m10[@]} -eq "$n_expected" ]] || align_complete=0
   fi
 fi
 
@@ -187,20 +187,38 @@ if [[ "$align_complete" -eq 1 ]]; then
   echo "<<Complete BAM set already present in bam/ — skipping trimming and alignment (use -f to force)>>"
 else
 
-# FASTQ -> Trimmed FASTQ (populates & creates the trimmed directory)
-# trim_galore auto-detects gzip input and gzip-compresses output by default.
 mkdir -p trimmed
-trim_galore --cores "$threads" --output_dir trimmed "${raw_fastqs[@]}" >> output.log 2>&1
-echo "<<FASTQs trimmed>>"
+shopt -s nullglob
+trimmed_fastqs=(trimmed/*.fq trimmed/*.fastq trimmed/*.fq.gz trimmed/*.fastq.gz)
+shopt -u nullglob
+
+trim_complete=1
+if [[ "$force" -eq 1 ]]; then
+  trim_complete=0
+else
+  [[ ${#trimmed_fastqs[@]} -eq "$n_expected" ]] || trim_complete=0
+fi
+
+if [[ "$trim_complete" -eq 1 ]]; then
+  echo "<<Complete set of trimmed FASTQs already present in trimmed/ — skipping trimming (use -f to force)>>"
+else
+  # trim_galore auto-detects gzip input and gzip-compresses output by default.
+  trim_galore --cores "$threads" --output_dir trimmed "${raw_fastqs[@]}" >> output.log 2>&1
+  echo "<<FASTQs trimmed>>"
+  shopt -s nullglob
+  trimmed_fastqs=(trimmed/*.fq trimmed/*.fastq trimmed/*.fq.gz trimmed/*.fastq.gz)
+  shopt -u nullglob
+fi
+
+if [[ ${#trimmed_fastqs[@]} -eq 0 ]]; then
+  echo "<<No trimmed fastq files found in trimmed/ to align>>"
+  exit 1
+fi
 
 # Trimmed FASTQ -> sorted, indexed BAM directly (bowtie2 piped into samtools
 # sort; no SAM files are ever written to disk). bowtie2 reads gzipped FASTQ
 # natively, so trimmed .fq.gz files are used as-is.
 bowtie2-build --threads "$threads" "$fasta" index >> output.log 2>&1
-
-shopt -s nullglob
-trimmed_fastqs=(trimmed/*.fq trimmed/*.fastq trimmed/*.fq.gz trimmed/*.fastq.gz)
-shopt -u nullglob
 
 for file in "${trimmed_fastqs[@]}"; do
   base="${file##*/}"
