@@ -8,6 +8,7 @@ dependencies:
   - cutadapt
   - samtools
   - trim-galore
+  - pysam
   - fastqc
   - sra-tools
   - r-base=4.4
